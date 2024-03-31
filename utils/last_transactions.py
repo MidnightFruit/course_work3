@@ -26,7 +26,7 @@ def check_data(data: list):
             return False
         elif 'description' not in i:
             return False
-        elif 'to' not in i and 'from' not in i:
+        elif ('to' not in i) and ('from' not in i):
             return False
     return True
 
@@ -54,12 +54,13 @@ def prepare_data(dir_to_file: str, stage: int):
         print("Не верный формат данных")
         return []
 
-
-
     all_operations = sorted(all_operations, key=lambda item: (
         item["state"], datetime.strptime(item["date"][0:19], "%Y-%m-%dT%H:%M:%S")), reverse=True)
 
     result = []
+    if len(all_operations) < stage:
+        stage = len(all_operations)
+
     for i in range(stage):
         result.append(all_operations[i])
 
@@ -73,7 +74,7 @@ def hide_data(data: list):
     :return: если формат хранения данных соответствует требованиям, то будет возращён тот же список, со скрытыми данными
              если формат не соответствует требованиям, то будет возвращён пустой массив
     """
-    if not(check_data(data)):
+    if not check_data(data):
         print("Не верный формат данных")
         return []
 
@@ -84,13 +85,14 @@ def hide_data(data: list):
             else:
                 cart = i['to'].split()
                 number = cart[len(cart) - 1]
-                cart[len(cart) - 1] = ' ' + number[:4] + ' ' + number[5:7] + '** **** ' + number[-4:]
+                cart[len(cart) - 1] = ' ' + number[:4] + ' ' + number[4:6] + '** **** ' + number[-4:]
+                i['to'] = ''.join(cart)
             if 'Счет' in i['from']:
                 i['from'] = i['from'][:5] + '**' + i['from'][-4:]
             else:
                 cart = i['from'].split()
                 number = cart[len(cart) - 1]
-                cart[len(cart) - 1] = ' ' + number[:4] + ' ' + number[5:7] + '** **** ' + number[-4:]
+                cart[len(cart) - 1] = ' ' + number[:4] + ' ' + number[4:6] + '** **** ' + number[-4:]
                 i['from'] = ''.join(cart)
         else:
             if 'Счет' in i['to']:
@@ -98,7 +100,8 @@ def hide_data(data: list):
             else:
                 cart = i['to'].split()
                 number = cart[len(cart) - 1]
-                cart[len(cart) - 1] = ' ' + number[:4] + ' ' + number[5:7] + '** **** ' + number[-4:]
+                cart[len(cart) - 1] = ' ' + number[:4] + ' ' + number[4:6] + '** **** ' + number[-4:]
+                i['to'] = ''.join(cart)
 
     return data
 
